@@ -48,6 +48,10 @@ router.get('/', async (req, res) => {
 
 // Tạo mới một bài nhạc
 router.post('/', upload.fields([{ name: 'url', maxCount: 1 }, { name: 'coverurl', maxCount: 1 }]), async (req, res) => {
+    if (!req.files['url'] || !req.files['coverurl']) {
+        return res.status(400).json({ message: 'Please upload both the song file and the cover image.' });
+    }
+
     const song = new Song({
         title: req.body.title,
         description: req.body.description,

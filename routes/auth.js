@@ -8,13 +8,13 @@ const router = express.Router();
 
 // Route kiểm tra xác thực
 router.get('/me', authMiddleware, async (req, res) => {
-  try {
-      const user = await User.findById(req.user.id).select('-password');
-      res.json(user);
-  } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
-  }
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
 });
 
 // Route đăng ký
@@ -90,5 +90,18 @@ router.post('/login', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+// Route đăng xuất
+router.post('/logout', authMiddleware, (req, res) => {
+    try {
+        const token = req.header('Authorization').replace('Bearer ', '');
+        authMiddleware.addTokenToBlacklist(token); // Thêm token vào blacklist
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
+
 
 module.exports = router;
